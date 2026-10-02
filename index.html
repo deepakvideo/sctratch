@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+        .gallery-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -10px rgba(245, 158, 11, 0.3);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen p-4 md:p-8 justify-between">
+
+    <!-- Wrapper for header and gallery content -->
+    <div class="w-full max-w-7xl mx-auto flex flex-col">
+        <!-- Header -->
+        <header class="w-full flex flex-col md:flex-row items-center justify-between bg-slate-900/80 backdrop-blur-md px-6 py-4 rounded-2xl border border-slate-800 shadow-xl mb-8 gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-gradient-to-tr from-amber-500 to-yellow-300 rounded-xl text-slate-950 shadow-lg shadow-amber-500/20">
+                    <i data-lucide="image" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h1 class="heading-font text-2xl md:text-3xl font-black tracking-wider bg-gradient-to-r from-amber-300 via-yellow-100 to-amber-400 bg-clip-text text-transparent">IMAGE GALLERY</h1>
+                    <p class="text-xs text-slate-400 font-medium">Browse through your uploaded asset collection (1 through 50)</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 px-4 py-2.5 rounded-xl">
+                    <i data-lucide="layers" class="w-5 h-5 text-amber-400"></i>
+                    <span class="text-sm font-semibold text-slate-300">50 Items</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Gallery Grid -->
+        <main id="galleryGrid" class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+            <!-- Dynamic items generated via JavaScript -->
+        </main>
+    </div>
+
+    <!-- Lightbox Modal for Full View -->
+    <div id="lightboxModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 p-3 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-full transition-colors z-10 shadow-lg">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center">
+            <img id="lightboxImg" src="" alt="Expanded View" class="max-w-full max-h-[80vh] object-contain rounded-xl border border-slate-700 shadow-2xl">
+            <p id="lightboxCaption" class="mt-4 text-sm font-bold text-amber-400 tracking-wider"></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-7xl mx-auto text-xs text-slate-500 pt-8 mt-auto border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4 px-2">
+        <p>&copy; 2026 Image Gallery Hub. All rights reserved.</p>
+        <div class="flex items-center gap-2 font-medium text-slate-400">
+            <span>Powered by Static Assets</span>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Generate gallery items for 1.png through 50.png
+        const galleryGrid = document.getElementById('galleryGrid');
+        
+        for (let i = 1; i <= 50; i++) {
+            const filename = `${i}.png`;
+            
+            const card = document.createElement('div');
+            card.className = "gallery-card group relative bg-slate-900/90 border border-slate-800 hover:border-amber-500/50 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 flex flex-col cursor-pointer";
+            card.onclick = () => openLightbox(filename, `Asset #${i}`);
+
+            card.innerHTML = `
+                <div class="aspect-square w-full bg-slate-950/50 overflow-hidden relative flex items-center justify-center p-2">
+                    <img src="${filename}" alt="${filename}" loading="lazy" class="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=300&auto=format&fit=crop';">
+                    <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span class="p-2.5 bg-amber-500 text-slate-950 rounded-xl shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="p-3 bg-slate-900/90 flex items-center justify-between border-t border-slate-800/60">
+                    <span class="text-xs font-bold text-slate-300 group-hover:text-amber-300 transition-colors">${filename}</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-slate-800 text-slate-400 rounded-md">PNG</span>
+                </div>
+            `;
+            galleryGrid.appendChild(card);
+        }
+
+        // Re-run Lucide to render icons inside dynamically created elements
+        lucide.createIcons();
+
+        // Lightbox functionality
+        const lightboxModal = document.getElementById('lightboxModal');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxCaption = document.getElementById('lightboxCaption');
+
+        function openLightbox(src, caption) {
+            lightboxImgHere is a clean, modern, and responsive HTML image gallery page designed to match your arcade/hub aesthetic (dark mode, Tailwind CSS, smooth hover effects, and a full-screen lightbox modal preview when clicking any image).
+
+Save this file as `gallery.html` in the same folder where your images (`1.png` through `50.png`) are stored.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <!-- Google Fonts Inter & Outfit -->
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap)" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="[https://unpkg.com/lucide@latest](https://unpkg.com/lucide@latest)"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+        .gallery-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -10px rgba(245, 158, 11, 0.3);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen p-4 md:p-8 justify-between">
+
+    <!-- Wrapper for header and main content -->
+    <div class="w-full max-w-7xl mx-auto flex flex-col">
+        <!-- Header -->
+        <header class="w-full flex flex-col md:flex-row items-center justify-between bg-slate-900/80 backdrop-blur-md px-6 py-4 rounded-2xl border border-slate-800 shadow-xl mb-8 gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-gradient-to-tr from-amber-500 to-yellow-300 rounded-xl text-slate-950 shadow-lg shadow-amber-500/20">
+                    <i data-lucide="image" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h1 class="heading-font text-2xl md:text-3xl font-black tracking-wider bg-gradient-to-r from-amber-300 via-yellow-100 to-amber-400 bg-clip-text text-transparent">ASSET GALLERY</h1>
+                    <p class="text-xs text-slate-400 font-medium">Browse and preview uploaded graphics and interface elements.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-200 transition-all shadow-sm">
+                    <i data-lucide="arrow-left" class="w-4 h-4 text-amber-400"></i>
+                    <span>Back to Hub</span>
+                </a>
+                <div class="flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 px-4 py-2.5 rounded-xl">
+                    <i data-lucide="layers" class="w-5 h-5 text-amber-400"></i>
+                    <span class="text-sm font-semibold text-slate-300">50 Items</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Gallery Grid -->
+        <main class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-8" id="galleryGrid">
+            <!-- Images will be dynamically injected via script -->
+        </main>
+    </div>
+
+    <!-- Lightbox Modal Preview -->
+    <div id="lightboxModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
+            <button onclick="closeLightbox()" class="absolute -top-12 right-0 p-2 text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 rounded-full transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <img id="lightboxImage" src="" alt="Expanded View" class="max-h-[80vh] max-w-full rounded-2xl border border-slate-700 shadow-2xl object-contain bg-slate-900/50">
+            <p id="lightboxCaption" class="mt-4 text-sm font-bold text-amber-400 tracking-wide"></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-7xl mx-auto text-xs text-slate-500 pt-8 mt-auto border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4 px-2">
+        <p>&copy; 2026 Scratch Card Arcade Hub. All rights reserved.</p>
+        <p class="text-slate-400 font-medium">Interactive Asset Viewer</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const grid = document.getElementById('galleryGrid');
+        const lightboxModal = document.getElementById('lightboxModal');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxCaption = document.getElementById('lightboxCaption');
+
+        // Dynamically generate image cards for 1.png through 50.png
+        for (let i = 1; i <= 50; i++) {
+            const filename = `${i}.png`;
+            const card = document.createElement('div');
+            card.className = "gallery-card bg-slate-900/90 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-3 flex flex-col justify-between transition-all duration-300 group cursor-pointer shadow-lg";
+            card.onclick = () => openLightbox(filename, `Asset #${i}`);
+
+            card.innerHTML = `
+                <div class="w-full h-36 bg-slate-950/60 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800/80 mb-3 relative">
+                    <img src="${filename}" alt="${filename}" loading="lazy" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <i data-lucide="maximize-2" class="w-6 h-6 text-amber-400 drop-shadow-md"></i>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-xs font-bold text-slate-300 group-hover:text-amber-300 transition-colors">${filename}</span>
+                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 bg-slate-800 text-slate-400 rounded-md">PNG</span>
+                </div>
+            `;
+            grid.appendChild(card);
+        }
+
+        // Re-initialize Lucide icons for dynamically added elements
+        lucide.createIcons();
+
+        function openLightbox(src, caption) {
+            lightboxImage.src = src;
+            lightboxCaption.textContent = caption;
+            lightboxModal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeLightbox() {
+            lightboxModal.classList.add('opacity-0', 'pointer-events-none');
+            lightboxImage.src = '';
+        }
+
+        lightboxModal.addEventListener('click', (e) => {
+            if (e.target === lightboxModal) {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>
